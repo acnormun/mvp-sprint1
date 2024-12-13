@@ -16,8 +16,8 @@ Este projeto é uma API simples para gerenciar **agrupamentos de madeira**, perm
 
 1. Clone este repositório:
    ```bash
-   git clone <URL_DO_REPOSITORIO>
-   cd mvp-agrupamentos
+   git clone https://github.com/acnormun/mvp-sprint1.git
+   cd mvp-sprint1
    ```
 
 2. Crie e ative um ambiente virtual:
