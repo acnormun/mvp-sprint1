@@ -1,10 +1,13 @@
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from swagger_config import setup_swagger
+from flask_cors import CORS
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///agrupamentos.db'
 db = SQLAlchemy(app)
+
+CORS(app)
 
 # Configuração do Swagger
 setup_swagger(app)
@@ -34,6 +37,10 @@ def cadastrar_agrupamento():
         schema:
           type: object
           properties:
+            id:
+              type: integer
+              description: Id do agrupamento
+              example: 1
             quantidade_de_toras:
               type: integer
               description: Quantidade de toras no agrupamento
@@ -49,6 +56,7 @@ def cadastrar_agrupamento():
     """
     data = request.get_json()
     novo_agrupamento = Agrupamento(
+        id=data['id'],
         quantidade_de_toras=data['quantidade_de_toras'],
         peso=data['peso']
     )
