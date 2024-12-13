@@ -64,6 +64,48 @@ def cadastrar_agrupamento():
     db.session.commit()
     return jsonify({"message": "Agrupamento cadastrado com sucesso!"}), 200
 
+@app.route('/editar_agrupamento/<int:id>', methods=['PUT'])
+def editar_agrupamento(id):
+    """
+    Editar um agrupamento pelo ID
+    ---
+    tags:
+      - Agrupamentos
+    parameters:
+      - in: path
+        name: id
+        required: true
+        type: integer
+        description: ID do agrupamento a ser editado
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          properties:
+            quantidade_de_toras:
+              type: integer
+              description: Nova quantidade de toras
+              example: 15
+            peso:
+              type: number
+              format: float
+              description: Novo peso total do agrupamento em kg
+              example: 1300.5
+    responses:
+      200:
+        description: Agrupamento atualizado com sucesso
+    """
+    data = request.get_json()
+    agrupamento = Agrupamento.query.get_or_404(id)
+
+    # Atualiza os campos do agrupamento
+    agrupamento.quantidade_de_toras = data.get('quantidade_de_toras', agrupamento.quantidade_de_toras)
+    agrupamento.peso = data.get('peso', agrupamento.peso)
+
+    db.session.commit()
+    return jsonify({"message": "Agrupamento atualizado com sucesso!"}), 200
+
 
 @app.route('/buscar_agrupamentos', methods=['GET'])
 def buscar_agrupamentos():
