@@ -1,40 +1,33 @@
-
 # **API de Agrupamentos de Madeira**
 
-Este projeto é uma API simples para gerenciar **agrupamentos de madeira**, permitindo o cadastro, listagem e exclusão de agrupamentos. Ele utiliza **Flask**, **Flask-SQLAlchemy** para gerenciamento do banco de dados SQLite, e **Flasgger** para documentação automática das rotas com Swagger.
+Este projeto é uma API em Flask para gerenciar **agrupamentos de madeira**, permitindo o cadastro, listagem, edição, exclusão e cálculo de frete com base em dois CEPs. Utiliza a API externa **ViaCEP** e **Geoapify** para geolocalização e cálculo de distância. Toda a documentação está disponível via Swagger.
 
 ---
 
 ## **Requisitos**
 
-- Python 3.7+
-- Pip (gerenciador de pacotes Python)
+- Python 3.10+
+- Docker (para execução com container)
 
 ---
 
-## **Instalação**
+## **Instalação com Docker**
 
 1. Clone este repositório:
-   ```bash
-   git clone https://github.com/acnormun/mvp-sprint1.git
-   cd mvp-sprint1
-   ```
+```bash
+git clone https://github.com/seuusuario/mvp-api.git
+cd mvp-api
+```
 
-2. Crie e ative um ambiente virtual:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # No Windows, use: venv\Scripts\activate
-   ```
+2. Construa a imagem Docker:
+```bash
+docker build -t mvp-api .
+```
 
-3. Instale as dependências:
-   ```bash
-   pip install flask flask-sqlalchemy flasgger
-   ```
-
-4. Execute a aplicação:
-   ```bash
-   python app.py
-   ```
+3. Rode o container:
+```bash
+docker run -p 5000:5000 mvp-api
+```
 
 ---
 
@@ -44,87 +37,65 @@ Este projeto é uma API simples para gerenciar **agrupamentos de madeira**, perm
 - `http://localhost:5000`
 
 ### **Documentação Swagger**
-- Acesse [http://localhost:5000/apidocs](http://localhost:5000/apidocs) para visualizar e testar as rotas da API.
+- Acesse [http://localhost:5000/apidocs](http://localhost:5000/apidocs)
 
 ### **Endpoints**
 
 #### **1. Cadastrar Agrupamento**
-- **Rota**: `POST /cadastrar_agrupamento`
-- **Descrição**: Cadastra um novo agrupamento de madeira.
-- **Corpo da Requisição**:
-  ```json
-  {
-    "quantidade_de_toras": 10,
-    "peso": 1200.5
-  }
-  ```
-- **Resposta**:
-  ```json
-  {
-    "message": "Agrupamento cadastrado com sucesso!"
-  }
-  ```
+- `POST /cadastrar_agrupamento`
 
 #### **2. Buscar Agrupamentos**
-- **Rota**: `GET /buscar_agrupamentos`
-- **Descrição**: Retorna todos os agrupamentos cadastrados.
-- **Resposta**:
-  ```json
-  [
-    {
-      "id": 1,
-      "quantidade_de_toras": 10,
-      "peso": 1200.5
-    }
-  ]
-  ```
+- `GET /buscar_agrupamentos`
 
-#### **3. Deletar Agrupamento**
-- **Rota**: `DELETE /deletar_agrupamento/<id>`
-- **Descrição**: Deleta um agrupamento pelo seu `id`.
-- **Parâmetro**:
-  - `id`: ID do agrupamento a ser deletado.
-- **Resposta**:
-  ```json
-  {
-    "message": "Agrupamento deletado com sucesso!"
-  }
-  ```
+#### **3. Editar Agrupamento**
+- `PUT /editar_agrupamento/<id>`
+
+#### **4. Deletar Agrupamento**
+- `DELETE /deletar_agrupamento/<id>`
+
+#### **5. Calcular Frete**
+- `POST /calcular_frete`
+- Corpo:
+```json
+{
+  "cep_origem": "30130-010",
+  "cep_destino": "01310-000"
+}
+```
+- Retorna distância em km e cálculo estimado do frete com base no peso informado.
 
 ---
 
 ## **Tecnologias Utilizadas**
 
-- **Flask**: Framework web.
-- **Flask-SQLAlchemy**: ORM para gerenciar o banco de dados SQLite.
-- **Flasgger**: Geração automática de documentação Swagger.
+- Flask
+- Flask-SQLAlchemy
+- Flasgger
+- Flask-CORS
+- Requests
+- SQLite
 
 ---
 
-## **Como Personalizar**
+## **API Externa Utilizada**
 
-- **Banco de Dados**: A configuração do banco de dados está em `app.config['SQLALCHEMY_DATABASE_URI']`. Por padrão, utiliza um arquivo SQLite chamado `agrupamentos.db`.
-- **Documentação Swagger**: A documentação está configurada no arquivo `swagger_config.py`.
-
----
-
-## **Próximos Passos**
-
-- Adicionar autenticação (opcional).
-- Melhorar validação dos dados de entrada com `marshmallow` ou `pydantic`.
-- Deploy em um servidor (Heroku, AWS, etc.).
+- **ViaCEP**: [https://viacep.com.br](https://viacep.com.br)
+- **Geoapify**: [https://www.geoapify.com/](https://www.geoapify.com/)
+  - Gratuita (até 3.000 requisições por dia)
+  - Requer criação de chave (API Key)
 
 ---
 
-## **Contribuição**
+## **Personalização**
 
-Contribuições são bem-vindas! Sinta-se à vontade para abrir issues ou enviar pull requests.
+- O banco de dados está em `agrupamentos.db`
+- A documentação está em `swagger_config.py`
 
 ---
 
 ## **Licença**
 
-Este projeto está licenciado sob a licença MIT. Consulte o arquivo `LICENSE` para mais informações.
+Este projeto está sob a licença MIT.
 
 ---
 
