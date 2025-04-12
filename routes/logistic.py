@@ -3,10 +3,9 @@ from flask import Blueprint, request, jsonify
 
 logistic_bp = Blueprint('logistic', __name__)
 
-GEOAPIFY_API_KEY = "335345c197c74640b2da2c95040d1dca"  # Substitua pela sua chave real
+GEOAPIFY_API_KEY = "335345c197c74640b2da2c95040d1dca"
 
 def buscar_coordenadas(cep):
-    """Consulta o ViaCEP para endereço e usa Geoapify para pegar coordenadas."""
     viacep_url = f"https://viacep.com.br/ws/{cep}/json/"
     viacep_response = requests.get(viacep_url)
     if viacep_response.status_code != 200:
@@ -29,7 +28,7 @@ def buscar_coordenadas(cep):
         raise Exception("Nenhuma coordenada encontrada para o endereço.")
     
     coords = features[0]["geometry"]["coordinates"]
-    return coords[1], coords[0]  # latitude, longitude
+    return coords[1], coords[0]
 
 @logistic_bp.route('/calcular_frete', methods=['POST'])
 def calcular_frete():
@@ -41,7 +40,6 @@ def calcular_frete():
         lat1, lon1 = buscar_coordenadas(cep_origem)
         lat2, lon2 = buscar_coordenadas(cep_destino)
 
-        # Chamada à API Distance Matrix da Geoapify
         distance_url = "https://api.geoapify.com/v1/routing"
         params = {
             "waypoints": f"{lat1},{lon1}|{lat2},{lon2}",
@@ -56,8 +54,7 @@ def calcular_frete():
         distancia_metros = route_info["features"][0]["properties"]["distance"]
         distancia_km = round(distancia_metros / 1000, 2)
 
-        # Regra simples de cálculo de frete
-        valor_frete = round(distancia_km * 3.5, 2)  # R$ 3,50 por km
+        valor_frete = round(distancia_km * 3.5, 2)
 
         return jsonify({
             "cep_origem": cep_origem,
